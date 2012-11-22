@@ -4,17 +4,18 @@
 // Visual Settings...
 int color1[] = {40, 50, 120};
 int color2[] = {255, 255, 255};
-int bpm = 70;
-int steps = 20;
+float bpm = 70;
+float steps = 20;
 int randomness = 10;
 
 // System Settings...
 int dataPin = 2;
 int clockPin = 3;
-WS2801 strip = WS2801(40, dataPin, clockPin);
+WS2801 strip = WS2801(20, dataPin, clockPin);
 boolean debug_mode = true;
 unsigned int cycles = 0;
-static unsigned int wait = ((60 / bpm) / steps) * 1000;
+float waitFloat = (((60 / bpm) / (steps *2 )) * 1000);
+int wait = (int) waitFloat;
 
 // Required Functions...
 
