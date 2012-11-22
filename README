@@ -1,0 +1,12 @@
+Lunar Clips RGB LED pattern for sculpture.
+
+Hardware...
+http://www.karlssonrobotics.com/shop/rgb-led-chain-20-led-addressable
+https://www.karlssonrobotics.com/shop/arduino-uno-r3
+
+Software...
+http://dlnmh9ip6v2uc.cloudfront.net/datasheets/Components/LED/WS2801-Library.zip
+
+More info about using libraries with Arduino...
+http://arduino.cc/en/Guide/Libraries
+
