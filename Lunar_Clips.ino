@@ -5,18 +5,20 @@
 int color1[] = {40, 50, 120};
 int color2[] = {255, 255, 255};
 float bpm = 70; // beats per minute.
-float cph = 120; // cycles per hour.
+int surgeSpeed = 4; // surge growth (in pulses).
 float steps = 20; // steps between colors (bg).
 int randomness = 0; // color steps to jump around while fading (bg).
 
 // System Settings...
 int dataPin = 2;
 int clockPin = 3;
-WS2801 strip = WS2801(20, dataPin, clockPin);
+int pins = 20;
+WS2801 strip = WS2801(pins, dataPin, clockPin);
 boolean debug_mode = true;
 unsigned int cycles = 0;
 float waitFloat = (((60 / bpm) / (steps * 2)) * 1000);
 int wait = (int) waitFloat;
+int surgeLevel = 0;
 
 // Required Functions...
 
@@ -32,21 +34,20 @@ void setup() {
 }
 
 void loop() {
-  
+  int frame = (cycles / 2) / steps;
   int i;
   for (i=0; i < steps*2; i++) {
     if (i >= steps) {
-      colorPicker(steps - (i - steps));
+      // Run the color back.
+      colorPicker(steps - (i - steps), frame);
     }
     else {
-      colorPicker(i);
+      // Run the color forward.
+      colorPicker(i, frame);
     }
-    
-    cyclist();
-    
+    cyclist(frame);
     strip.show();
     delay(wait);
-
   }
 }
 
@@ -56,18 +57,33 @@ void loop() {
 // Purlse intensity as well. Add in color fluctuation if possible.
 
 // Larger pattern.
-void cyclist() {
-  if (cycles % 120 < 8) {
-    colorWipe(Color(255, 0, 0));
+void cyclist(int f) {
+  // Base this timing on a pulse speed count.
+  if ((f!=0) && f % surgeSpeed == 0) {
+    report(5,5,5,String(surgeLevel));
+    // Increase/decrease how many red are up.
+    // Only when on the first cycle of a frame.
+    if (cycles == f * (pins*2)) {
+      if ((f % pins) >= (pins/2)) {
+        surgeLevel--;
+      }
+      else {
+        surgeLevel++;
+      }
+    }
   }
-  else {
-      
+
+  int i;
+  // Color the red pixels.
+  for (i=0;i<=surgeLevel;i++) {
+    strip.setPixelColor(i, Color(255, 0, 0));
   }
+
   cycles++;
 }
 
 // Pulse blue picker.
-void colorPicker(int i) {
+void colorPicker(int i, int f) {
 
   int red = ((abs(color1[0] - color2[0]) / steps) * i) + color1[0];
   int green = ((abs(color1[1] - color2[1]) / steps) * i) + color1[1];
@@ -94,8 +110,8 @@ void colorPicker(int i) {
   if(debug_mode) {
     String msg = "<< << << #";
     msg += cycles;
-    msg += " w:";
-    msg += wait;
+    msg += " f:";
+    msg += f;
     report(red, green, blue, msg);
   }
 
