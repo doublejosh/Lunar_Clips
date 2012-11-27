@@ -5,7 +5,7 @@
 int color1[] = {40, 50, 120};
 int color2[] = {255, 255, 255};
 float bpm = 70; // beats per minute.
-int surgeSpeed = 4; // surge growth (in pulses).
+int surgeSpeed = 1; // surge growth (in pulses).
 float steps = 20; // steps between colors (bg).
 int randomness = 0; // color steps to jump around while fading (bg).
 
@@ -59,12 +59,12 @@ void loop() {
 // Larger pattern.
 void cyclist(int f) {
   // Base this timing on a pulse speed count.
-  if ((f!=0) && f % surgeSpeed == 0) {
+  if (f % surgeSpeed == 0) {
     report(5,5,5,String(surgeLevel));
     // Increase/decrease how many red are up.
     // Only when on the first cycle of a frame.
-    if (cycles == f * (pins*2)) {
-      if ((f % pins) >= (pins/2)) {
+    if (cycles == (f * (pins*2))) {
+      if ((f % (pins * 2)) >= pins) {
         surgeLevel--;
       }
       else {
@@ -75,7 +75,7 @@ void cyclist(int f) {
 
   int i;
   // Color the red pixels.
-  for (i=0;i<=surgeLevel;i++) {
+  for (i=0;i<=(surgeLevel-1);i++) {
     strip.setPixelColor(i, Color(255, 0, 0));
   }
 
