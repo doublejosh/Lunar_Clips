@@ -8,14 +8,13 @@ float bpm = 70; // beats per minute.
 int surgeSpeed = 1; // surge growth (in pulses).
 float steps = 20; // steps between colors (bg).
 int randomness = 0; // color steps to jump around while fading (bg).
-int surgeHold[2][1] = {0, 20};  // Stay surge or blank color for a while.
-surgeHold[0][0] = 5;
-surgeHold[1][0] = 10;
+int surgeHold[2] = {5, 10}; // Stay surge or blank color for a while.
+int surgeHoldIndex = 0;
 
 //int surgeColor1[] = {8, 173, 35};
 //int surgeColor2[] = {2, 102, 200};
-int surgeColor2[] = {255, 10, 18};
-int surgeColor1[] = {200, 0, 0};
+int surgeColor2[] = {255, 15, 24};
+int surgeColor1[] = {200, 2, 0};
 
 // System Settings...
 int dataPin = 2;
@@ -44,7 +43,8 @@ void setup() {
 void loop() {
   int frame = (cycles / 2) / steps;
   int i;
-  for (i=0; i < steps*2; i++) {
+  
+  for (i=0; i < steps * 2; i++) {
     if (i >= steps) {
       // Run the color back.
       colorPicker(steps - (i - steps), frame);
@@ -66,6 +66,18 @@ void loop() {
 
 // Larger pattern.
 void cyclist(int f) {
+
+  /*
+  // While surge is at max or min hold for a while.
+  // @todo this test will be different if color comes from center.
+  if (surgeLevel == 0 || surgeLevel == pins || surgeHoldIndex != 0) {
+    Which hold amount should we count to?
+    surgeHold[0]
+    Increment the hold index or reduce to zero.
+    surgeHoldIndex
+  }
+  */
+
   // Base this timing on a pulse speed count.
   if (f % surgeSpeed == 0) {
     //report(5,5,5,String(surgeLevel));
@@ -80,9 +92,7 @@ void cyclist(int f) {
       }
     }
   }
-  
-  if 
-  
+
   // Pick the surge color.  
   float red = (((surgeColor1[0] - surgeColor2[0]) / pins) * surgeLevel) + surgeColor2[0];
   float green = (((surgeColor1[1] - surgeColor2[1]) / pins) * surgeLevel) + surgeColor2[1];
@@ -107,14 +117,16 @@ void cyclist(int f) {
   for (i=0;i<=(surgeLevel-1);i++) {
     strip.setPixelColor(i, c);
   }
-  
+
+  // Protect upper data type limit.
   if (cycles < 65534) {
     cycles++;
   }
   else {
     cycles = 0;
+    surgeLevel = 0;
   }
-  
+
 }
 
 // Pulse blue picker.
