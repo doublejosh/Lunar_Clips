@@ -41,6 +41,15 @@ void setup() {
 }
 
 void loop() {
+  // Protect upper data type limit.
+  if (cycles < 65534) {
+    cycles++;
+  }
+  else {
+    cycles = 0;
+    surgeLevel = 0;
+  }
+  
   int frame = (cycles / 2) / steps;
   int i;
   
@@ -116,15 +125,6 @@ void cyclist(int f) {
   // Color the red pixels.
   for (i=0;i<=(surgeLevel-1);i++) {
     strip.setPixelColor(i, c);
-  }
-
-  // Protect upper data type limit.
-  if (cycles < 65534) {
-    cycles++;
-  }
-  else {
-    cycles = 0;
-    surgeLevel = 0;
   }
 
 }
